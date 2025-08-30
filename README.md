@@ -25,14 +25,16 @@ This repo captures week-by-week labs with real outputs (screenshots, commands, n
 - From EC2, connected over SSL, created `testdb.users`, inserted 1 row
 - Reconnected in a fresh session to confirm persistence
 - **Day 4** — **S3 policies + practice**: created bucket `aws-lab-tim-2025` with public **object READ** via **bucket policy**; augmented EC2 role (`S3ReadOnlyRole`) with inline policy to allow **PutObject/List only for this bucket**; uploaded from EC2 and verified public URL returns content. (`week2/day4-s3-policy-public-read/`)
+- **Day 5** — **Mini app (EC2 + RDS)**: Apache+PHP on EC2 connects to RDS MySQL (`testdb.users`), renders rows over HTTP. RDS SG allows 3306 from EC2 SG. (`mini-app/`)
 
 
 ## Key Concepts Learned
-- IAM: root vs IAM users, groups, MFA, **roles vs users**, trust policies, **instance profiles**, 
-- S3: **Bucket policy vs ACL** (use bucket policies; ACLs typically disabled with “Bucket owner enforced”).  
-- S3: **Block Public Access** gates public exposure regardless of policy; must be OFF for public reads.  
-- S3: **Virtual-hosted–style URL** format: `https://<bucket>.s3.<region>.amazonaws.com/<key>`.  
-- IAM: **Least privilege** via **inline policy scoped to one bucket** (PutObject/List only).
+- IAM: root vs IAM users, groups, MFA; **roles vs users**, trust policies, **instance profiles**, **temporary creds via STS**; least privilege via bucket-scoped inline policy.
+- S3: buckets vs objects; **Bucket policy vs ACL** (prefer bucket policies; ACLs usually disabled by “Bucket owner enforced”); **Block Public Access** gate; virtual-hosted URL format.
+- EC2: SSH keys, security groups (ingress 22/80), stop/start/reboot/terminate, ephemeral public IPs; **IMDSv2 required**.
+- RDS: private endpoints, SG→SG connectivity (EC2 → RDS on 3306), SSL client connections.
+- Bash on Windows (Git Bash): scripting, execution bits, redirection.
+
 
 **temporary creds via STS**.
 - S3: buckets vs objects, public site hosting, bucket policies.
