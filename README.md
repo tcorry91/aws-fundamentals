@@ -1,66 +1,59 @@
 # aws-fundamentals
-Hands-on AWS fundamentals labs and daily exercises — documenting my path into Cloud/DevOps (Windows + Git Bash).
+Hands-on AWS & Terraform labs on Windows (PowerShell + Git Bash). Real outputs (screenshots, commands, notes).
 
 ## Overview
-This repo captures week-by-week labs with real outputs (screenshots, commands, notes). Focus so far: IAM hardening (users → **roles**), EC2 provisioning, S3, and basic Bash automation.
+Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least privilege, instance roles, and reproducible infra.
 
 ## Completed Labs
-**Week 1**
-- **Day 1** — Account + AWS CLI setup; verified with `aws s3 ls`.
-- **Day 2** — EC2 (Linux): launch, SSH, install Nginx; security groups.
-- **Day 3** — IAM: users, groups, least-privilege; MFA enforced.
-- **Day 4** — S3 static website hosting; bucket policy + index page.
-- **Day 5** — Bash script to list S3 buckets → `s3_report.txt` (manual run).
+### Week 1
+- **Day 1** — Account + AWS CLI setup; verified with `aws s3 ls` (`week1/day1/`).
+- **Day 2** — EC2 (Amazon Linux/Ubuntu): launch, SSH, web server, security groups (`week1/day2/`).
+- **Day 3** — IAM users, groups, MFA; least privilege (`week1/day3/`).
+- **Day 4** — S3 static website hosting; bucket policy + index (`week1/day4/`).
+- **Day 5** — Bash script to list S3 buckets → `s3_report.txt` (`Scripts/s3_list.sh`).
 
-**Week 2**
-- **Day 1** — EC2 lifecycle (Ubuntu): install Apache, serve “Hello Cloud”, verify from local; Stop → Start (IP change) → Reboot → Terminate. (`week2/day1-ec2/`)
-- **Day 2** — **IAM Role on EC2 → S3 ReadOnly**: created `S3ReadOnlyRole` (trust: EC2) with AWS-managed `AmazonS3ReadOnlyAccess`; launched EC2 with the role (no static keys). Verified:
-  - `sts get-caller-identity` → `assumed-role/S3ReadOnlyRole/...`
-  - `s3 ls` works (read scope present)
-  - `s3 cp ...` **PutObject** denied (least privilege proven)
-  (`week2/day2-iam-role-s3-readonly/`)
-  - **Day 3** - RDS MySQL Basics
-- RDS MySQL (`db.t3.micro`, gp3 20GiB, Public access: No)
-- SG→SG: RDS 3306 allows inbound from EC2 SG
-- From EC2, connected over SSL, created `testdb.users`, inserted 1 row
-- Reconnected in a fresh session to confirm persistence
-- **Day 4** — **S3 policies + practice**: created bucket `aws-lab-tim-2025` with public **object READ** via **bucket policy**; augmented EC2 role (`S3ReadOnlyRole`) with inline policy to allow **PutObject/List only for this bucket**; uploaded from EC2 and verified public URL returns content. (`week2/day4-s3-policy-public-read/`)
-- **Day 5** — **Mini app (EC2 + RDS)**: Apache+PHP on EC2 connects to RDS MySQL (`testdb.users`), renders rows over HTTP. RDS SG allows 3306 from EC2 SG. (`mini-app/`)
+### Week 2
+- **Day 1** — EC2 lifecycle (stop/start/reboot/terminate) + Apache hello (`week2/day1-ec2/`).
+- **Day 2** — **EC2 instance role** with `AmazonS3ReadOnlyAccess`; verified `assumed-role/...` and denied PutObject (`week2/day2-iam-role-s3-readonly/`).
+- **Day 3** — **RDS MySQL** (`db.t3.micro`, private): SG→SG (EC2→RDS:3306), SSL client, table + row, persistence check (`week2/day3-rds/`).
+- **Day 4** — **S3 policies**: public object READ via bucket policy; EC2 role inline policy for bucket-scoped Put/List; verified public URL (`week2/day4-s3-policy-public-read/`).
+- **Day 5** — **Mini app (EC2+RDS)**: PHP reads `testdb.users` over HTTP (`mini-app/`).
 
+### Week 3
+- **Day 1** — **Terraform: first S3 bucket** (`week3/day1/`).
+  - Steps: `init → fmt → validate → plan → apply`.
+  - Output `bucket_name`: *(see `terraform output -raw bucket_name` in README inside day folder)*.
+  - Notes: local state (`terraform.tfstate`, gitignored); region **ap-southeast-2**.
 
 ## Key Concepts Learned
-- IAM: root vs IAM users, groups, MFA; **roles vs users**, trust policies, **instance profiles**, **temporary creds via STS**; least privilege via bucket-scoped inline policy.
-- S3: buckets vs objects; **Bucket policy vs ACL** (prefer bucket policies; ACLs usually disabled by “Bucket owner enforced”); **Block Public Access** gate; virtual-hosted URL format.
-- EC2: SSH keys, security groups (ingress 22/80), stop/start/reboot/terminate, ephemeral public IPs; **IMDSv2 required**.
-- RDS: private endpoints, SG→SG connectivity (EC2 → RDS on 3306), SSL client connections.
-- Bash on Windows (Git Bash): scripting, execution bits, redirection.
-
-
-**temporary creds via STS**.
-- S3: buckets vs objects, public site hosting, bucket policies.
-- EC2: SSH keys, security groups (ingress 22/80), stop vs start vs reboot vs terminate, ephemeral public IPs (Elastic IP if you need static), **IMDSv2 required**.
-- Bash on Windows (Git Bash): scripting, execution bits, redirecting output.
-### Commands
-mysql --ssl-mode=REQUIRED -h <endpoint> -P 3306 -u admin -p
-CREATE DATABASE testdb; USE testdb;
-CREATE TABLE users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), email VARCHAR(100));
-INSERT INTO users (name,email) VALUES ('Alice','alice@example.com');
-SELECT * FROM users;
+- **IAM:** root vs users, groups, MFA; **roles vs users**, instance profiles; STS temp creds; least privilege.
+- **S3:** buckets vs objects; Block Public Access; **bucket policy > ACLs**; virtual-hosted–style URLs.
+- **EC2:** key pairs; security groups; ephemeral public IP; **IMDSv2 required**.
+- **RDS:** private endpoints; SG→SG; SSL client connections.
+- **Terraform:** providers, lockfile, state, `plan/apply/destroy`, `random_id` for unique names; keep state & `.terraform/` out of Git.
 
 ## Repository Structure
-Scripts/
-  s3_list.sh              # Bash: writes S3 bucket list to s3_report.txt
-week1/
-  day1/                   # CLI setup proof
-  day2/                   # EC2 + Nginx
-  day3/                   # IAM groups/permissions
-  day4/                   # S3 static website
-**Week 2**
-- **Day 1** — EC2 lifecycle (Ubuntu): install Apache, serve “Hello Cloud”, verify from local; Stop → Start (IP change) → Reboot → Terminate. (`week2/day1-ec2/`)
-- **Day 2** — **IAM Role on EC2 → S3 ReadOnly**: created `S3ReadOnlyRole` (trust: EC2) with AWS-managed `AmazonS3ReadOnlyAccess`; launched EC2 with the role (no static keys). Verified: `assumed-role/S3ReadOnlyRole/...`, `s3 ls` works, `PutObject` denied. (`week2/day2-iam-role-s3-readonly/`)
-- **Day 3** — **RDS MySQL Basics**: `db.t3.micro` (Public access: **No**), SG→SG (EC2 SG → RDS 3306), connected over SSL from EC2; created `testdb.users`, inserted 1 row; reconnected to confirm persistence. (`week2/day3-rds/`)
-- **Day 4** — **S3 policies + practice**: bucket `aws-lab-tim-2025` with public **object READ** via **bucket policy**; EC2 role augmented with inline policy to allow **PutObject/List only for this bucket**; uploaded from EC2 and verified public URL. (`week2/day4-s3-policy-public-read/`)
+aws-fundamentals/
+├─ Scripts/
+│ └─ s3_list.sh
+├─ week1/
+│ ├─ day1/ ├─ day2/ ├─ day3/ └─ day4/
+├─ week2/
+│ ├─ day1-ec2/
+│ ├─ day2-iam-role-s3-readonly/
+│ ├─ day3-rds/
+│ └─ day4-s3-policy-public-read/
+├─ week3/
+│ └─ day1/
+├─ mini-app/
+└─ README.md
 
 
-s3_report.txt             # latest S3 report (generated by s3_list.sh)
-README.md
+## Safety & Hygiene
+- No credentials in repo. `.gitignore` includes: `.terraform/`, `terraform.tfstate`, `terraform.tfstate.backup`, `*.tfvars`, `crash.log`.
+- Tear down lab infra when idle: `terraform destroy -auto-approve`.
+
+## Anki (selected)
+- Initialize Terraform project → `terraform init`
+- What file stores Terraform state? → `terraform.tfstate`
+- What does `terraform plan` do? → Shows the execution plan without changing resources.
