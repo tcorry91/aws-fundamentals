@@ -20,10 +20,15 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
 - **Day 5** — **Mini app (EC2+RDS)**: PHP reads `testdb.users` over HTTP (`mini-app/`).
 
 ### Week 3
-- **Day 1** — **Terraform: first S3 bucket** (`week3/day1/`).
+- **Day 1** — **Terraform: first S3 bucket** (`Week 3/day1/`).
   - Steps: `init → fmt → validate → plan → apply`.
-  - Output `bucket_name`: *(see `terraform output -raw bucket_name` in README inside day folder)*.
+  - Output `bucket_name`: *(see `terraform output -raw bucket_name` in the day folder)*.
   - Notes: local state (`terraform.tfstate`, gitignored); region **ap-southeast-2**.
+- **Day 2** — **Terraform: EC2 via variables + outputs** (`Week 3/day2/`).
+  - Vars: `instance_type` (t3.micro), `key_name` (tim-w3d2-console), `ami_id` (optional), `ingress_cidr` (lab: 0.0.0.0/0).
+  - Steps: `init → fmt → validate → apply (-var "key_name=tim-w3d2-console") → ssh → echo 'IaC works!' > /var/www/html/index.html`.
+  - Outputs: `public_ip`, `public_dns` — *(see `terraform output -raw public_ip` / `public_dns` in the day folder)*.
+  - Notes: local state gitignored; SG allows 22/80 (lab); region **ap-southeast-2**. Screenshots: `w3d2-apply-outputs.png`, `w3d2-ssh-echo.png`, `w3d2-http-iac-works.png`.
 
 ## Key Concepts Learned
 - **IAM:** root vs users, groups, MFA; **roles vs users**, instance profiles; STS temp creds; least privilege.
@@ -43,11 +48,11 @@ aws-fundamentals/
 │ ├─ day2-iam-role-s3-readonly/
 │ ├─ day3-rds/
 │ └─ day4-s3-policy-public-read/
-├─ week3/
-│ └─ day1/
+├─ Week 3/
+│ ├─ day1/
+│ └─ day2/
 ├─ mini-app/
 └─ README.md
-
 
 ## Safety & Hygiene
 - No credentials in repo. `.gitignore` includes: `.terraform/`, `terraform.tfstate`, `terraform.tfstate.backup`, `*.tfvars`, `crash.log`.
@@ -57,3 +62,6 @@ aws-fundamentals/
 - Initialize Terraform project → `terraform init`
 - What file stores Terraform state? → `terraform.tfstate`
 - What does `terraform plan` do? → Shows the execution plan without changing resources.
+- How to pass variables to Terraform? → `-var "name=value"`, `*.tfvars` / `*.auto.tfvars`, or `TF_VAR_name`.
+- What is `outputs.tf` for? → Print values (IP/DNS/ARNs) after apply for humans/tooling.
+- What happens if you delete `terraform.tfstate`? → Terraform “forgets” resources; plans become wrong; you must import or recreate/clean up.
