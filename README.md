@@ -57,11 +57,3 @@ aws-fundamentals/
 ## Safety & Hygiene
 - No credentials in repo. `.gitignore` includes: `.terraform/`, `terraform.tfstate`, `terraform.tfstate.backup`, `*.tfvars`, `crash.log`.
 - Tear down lab infra when idle: `terraform destroy -auto-approve`.
-
-## Anki (selected)
-- Initialize Terraform project → `terraform init`
-- What file stores Terraform state? → `terraform.tfstate`
-- What does `terraform plan` do? → Shows the execution plan without changing resources.
-- How to pass variables to Terraform? → `-var "name=value"`, `*.tfvars` / `*.auto.tfvars`, or `TF_VAR_name`.
-- What is `outputs.tf` for? → Print values (IP/DNS/ARNs) after apply for humans/tooling.
-- What happens if you delete `terraform.tfstate`? → Terraform “forgets” resources; plans become wrong; you must import or recreate/clean up.
