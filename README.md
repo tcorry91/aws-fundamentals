@@ -29,6 +29,21 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
   - Steps: `init → fmt → validate → apply (-var "key_name=tim-w3d2-console") → ssh → echo 'IaC works!' > /var/www/html/index.html`.
   - Outputs: `public_ip`, `public_dns` — *(see `terraform output -raw public_ip` / `public_dns` in the day folder)*.
   - Notes: local state gitignored; SG allows 22/80 (lab); region **ap-southeast-2**. Screenshots: `w3d2-apply-outputs.png`, `w3d2-ssh-echo.png`, `w3d2-http-iac-works.png`.
+- **Day 3** - **Remote State (S3 + DynamoDB lock)**
+# Week 3 — Day 3: Remote State (S3 + DynamoDB lock)
+Bucket: **terraform-state-2025-568438991403**  
+Key: **Week 3/day2/terraform.tfstate**  
+Region: **ap-southeast-2**  
+Lock table: **tf-locks**
+Steps:
+1) Created S3 (versioned, AES256 encryption, public access blocked) and DynamoDB lock table.
+2) Added `backend.tf` to Day 2 and ran `terraform init -migrate-state`.
+3) Verified `terraform.tfstate` exists in S3 (screenshot in this folder).
+
+**Why remote state?** Centralized, durable, versioned state; team-safe with locking; avoids local loss/corruption.  
+**State lock?** A DynamoDB record that prevents concurrent writes during plan/apply.
+
+
 
 ## Key Concepts Learned
 - **IAM:** root vs users, groups, MFA; **roles vs users**, instance profiles; STS temp creds; least privilege.
@@ -36,6 +51,7 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
 - **EC2:** key pairs; security groups; ephemeral public IP; **IMDSv2 required**.
 - **RDS:** private endpoints; SG→SG; SSL client connections.
 - **Terraform:** providers, lockfile, state, `plan/apply/destroy`, `random_id` for unique names; keep state & `.terraform/` out of Git.
+- **Remote State**
 
 ## Repository Structure
 aws-fundamentals/
@@ -51,6 +67,7 @@ aws-fundamentals/
 ├─ Week 3/
 │ ├─ day1/
 │ └─ day2/
+│ └─ day3/
 ├─ mini-app/
 └─ README.md
 
