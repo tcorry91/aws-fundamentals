@@ -30,7 +30,6 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
   - Outputs: `public_ip`, `public_dns` — *(see `terraform output -raw public_ip` / `public_dns` in the day folder)*.
   - Notes: local state gitignored; SG allows 22/80 (lab); region **ap-southeast-2**. Screenshots: `w3d2-apply-outputs.png`, `w3d2-ssh-echo.png`, `w3d2-http-iac-works.png`.
 - **Day 3** - **Remote State (S3 + DynamoDB lock)**
-# Week 3 — Day 3: Remote State (S3 + DynamoDB lock)
 Bucket: **terraform-state-2025-568438991403**  
 Key: **Week 3/day2/terraform.tfstate**  
 Region: **ap-southeast-2**  
@@ -42,7 +41,19 @@ Steps:
 
 **Why remote state?** Centralized, durable, versioned state; team-safe with locking; avoids local loss/corruption.  
 **State lock?** A DynamoDB record that prevents concurrent writes during plan/apply.
-
+- **Day 4** - Custom VPC (public + private)
+## Diagram
+```mermaid
+flowchart TB
+  igw[Internet Gateway]
+  subgraph VPC[ VPC 10.0.0.0/16 ]
+    pub[Public Subnet 10.0.1.0/24]
+    priv[Private Subnet 10.0.2.0/24]
+    rt_pub[Public RT: 0.0.0.0/0 -> IGW]
+    rt_priv[Private RT: local only]
+  end
+  pub --> rt_pub --> igw
+  priv --> rt_priv
 
 
 ## Key Concepts Learned
@@ -68,6 +79,7 @@ aws-fundamentals/
 │ ├─ day1/
 │ └─ day2/
 │ └─ day3/
+│ └─ day 4/
 ├─ mini-app/
 └─ README.md
 
