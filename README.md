@@ -26,34 +26,38 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
   - Notes: local state (`terraform.tfstate`, gitignored); region **ap-southeast-2**.
 - **Day 2** — **Terraform: EC2 via variables + outputs** (`Week 3/day2/`).
   - Vars: `instance_type` (t3.micro), `key_name` (tim-w3d2-console), `ami_id` (optional), `ingress_cidr` (lab: 0.0.0.0/0).
-  - Steps: `init → fmt → validate → apply (-var "key_name=tim-w3d2-console") → ssh → echo 'IaC works!' > /var/www/html/index.html`.
-  - Outputs: `public_ip`, `public_dns` — *(see `terraform output -raw public_ip` / `public_dns` in the day folder)*.
-  - Notes: local state gitignored; SG allows 22/80 (lab); region **ap-southeast-2**. Screenshots: `w3d2-apply-outputs.png`, `w3d2-ssh-echo.png`, `w3d2-http-iac-works.png`.
-- **Day 3** - **Remote State (S3 + DynamoDB lock)**
-Bucket: **terraform-state-2025-568438991403**  
-Key: **Week 3/day2/terraform.tfstate**  
-Region: **ap-southeast-2**  
-Lock table: **tf-locks**
-Steps:
-1) Created S3 (versioned, AES256 encryption, public access blocked) and DynamoDB lock table.
-2) Added `backend.tf` to Day 2 and ran `terraform init -migrate-state`.
-3) Verified `terraform.tfstate` exists in S3 (screenshot in this folder).
+  - Steps: `init → fmt → validate → apply → ssh → echo 'IaC works!' > /var/www/html/index.html`.
+  - Outputs: `public_ip`, `public_dns`. Screenshots: `w3d2-apply-outputs.png`, `w3d2-ssh-echo.png`, `w3d2-http-iac-works.png`.
+- **Day 3** — **Remote state (S3 + DynamoDB lock)** (`Week 3/day2/` state migrated)
+  - Bucket: **terraform-state-2025-568438991403**  
+  - Key: **Week 3/day2/terraform.tfstate**  
+  - Region: **ap-southeast-2**; Lock table: **tf-locks**  
+  - Why remote state: centralized, durable, versioned state; team-safe with locking; avoids local loss/corruption.  
+  - State lock: a DynamoDB record that prevents concurrent writes.
+- **Day 4** — **Custom VPC (public + private)** (`Week 3/day4/`)
+  - VPC `10.0.0.0/16`; Public `10.0.1.0/24` (0.0.0.0/0 → IGW); Private `10.0.2.0/24` (local only).
+  - Diagram:
+    ```mermaid
+    flowchart TB
+      igw[Internet Gateway]
+      subgraph VPC[ VPC 10.0.0.0/16 ]
+        pub[Public Subnet 10.0.1.0/24]
+        priv[Private Subnet 10.0.2.0/24]
+        rt_pub[Public RT: 0.0.0.0/0 -> IGW]
+        rt_priv[Private RT: local only]
+      end
+      pub --> rt_pub --> igw
+      priv --> rt_priv
+    ```
+- **Day 5** — **IAM role for EC2 (S3 read-only)** (`Week 3/day5/`)
+  - Role: `EC2S3Role` (trust = EC2) + AWS managed `AmazonS3ReadOnlyAccess`.
+  - Instance profile attached at launch; `aws sts get-caller-identity` shows `assumed-role/EC2S3Role/...`; `aws s3 ls` succeeds.
 
-**Why remote state?** Centralized, durable, versioned state; team-safe with locking; avoids local loss/corruption.  
-**State lock?** A DynamoDB record that prevents concurrent writes during plan/apply.
-- **Day 4** - Custom VPC (public + private)
-## Diagram
-```mermaid
-flowchart TB
-  igw[Internet Gateway]
-  subgraph VPC[ VPC 10.0.0.0/16 ]
-    pub[Public Subnet 10.0.1.0/24]
-    priv[Private Subnet 10.0.2.0/24]
-    rt_pub[Public RT: 0.0.0.0/0 -> IGW]
-    rt_priv[Private RT: local only]
-  end
-  pub --> rt_pub --> igw
-  priv --> rt_priv
+### Week 4
+
+- **Day 1** - cloud-ci-cd-demo — Dockerized Node “Hello World”
+Simple Node.js app containerized with Docker.
+
 
 
 ## Key Concepts Learned
@@ -62,25 +66,27 @@ flowchart TB
 - **EC2:** key pairs; security groups; ephemeral public IP; **IMDSv2 required**.
 - **RDS:** private endpoints; SG→SG; SSL client connections.
 - **Terraform:** providers, lockfile, state, `plan/apply/destroy`, `random_id` for unique names; keep state & `.terraform/` out of Git.
-- **Remote State**
+- **Remote State:** S3 backend + DynamoDB state locking.
 
 ## Repository Structure
 aws-fundamentals/
 ├─ Scripts/
-│ └─ s3_list.sh
+│  └─ s3_list.sh
 ├─ week1/
-│ ├─ day1/ ├─ day2/ ├─ day3/ └─ day4/
+│  ├─ day1/ ├─ day2/ ├─ day3/ └─ day4/
 ├─ week2/
-│ ├─ day1-ec2/
-│ ├─ day2-iam-role-s3-readonly/
-│ ├─ day3-rds/
-│ └─ day4-s3-policy-public-read/
+│  ├─ day1-ec2/
+│  ├─ day2-iam-role-s3-readonly/
+│  ├─ day3-rds/
+│  └─ day4-s3-policy-public-read/
 ├─ Week 3/
-│ ├─ day1/
-│ └─ day2/
-│ └─ day3/
-│ └─ day 4/
-├─ mini-app/
+│  ├─ day1/
+│  ├─ day2/
+│  ├─ day3/
+│  ├─ day4/
+│  └─ day5/
+├─ Week 4/
+│  ├─ day1/
 └─ README.md
 
 ## Safety & Hygiene
