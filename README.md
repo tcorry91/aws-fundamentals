@@ -55,8 +55,12 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
 
 ### Week 4
 
-- **Day 1** - cloud-ci-cd-demo — Dockerized Node “Hello World”
-Simple Node.js app containerized with Docker.
+- **Day 1** — Dockerize Node “Hello World” (`cloud-ci-cd-demo/`): `docker build -t myapp:1.0 .` → `docker run -p 8080:8080 myapp:1.0` (screenshots in `Screenshots/`).
+- **Day 2** — **Docker Hub push** (`cloud-ci-cd-demo/`).
+  - Tagged & pushed: `timuser91/myapp:1.0`
+  - Commands: `docker login -u timuser91` → `docker tag myapp:1.0 timuser91/myapp:1.0` → `docker push timuser91/myapp:1.0`
+  - Proof: `Screenshots/day2-push-success.png` (digest shown) and `Screenshots/day2-hub-tags.png` (Hub repo/tag visible)
+
 
 
 
