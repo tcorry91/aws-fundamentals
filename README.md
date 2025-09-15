@@ -60,7 +60,22 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
   - Tagged & pushed: `timuser91/myapp:1.0`
   - Commands: `docker login -u timuser91` → `docker tag myapp:1.0 timuser91/myapp:1.0` → `docker push timuser91/myapp:1.0`
   - Proof: `Screenshots/day2-push-success.png` (digest shown) and `Screenshots/day2-hub-tags.png` (Hub repo/tag visible)
-
+## Day 3 – Run container on AWS ECS (Fargate)
+**Goal:** Deploy DockerHub image `timuser91/myapp:1.0` onto AWS ECS Fargate and make it accessible via a public endpoint.
+**Steps**
+1. Created Fargate task definition `myapp-task` with container port **8080/TCP**.
+2. Created ECS cluster `myapp-cluster-mk2`.
+3. Created ECS service `myapp-svc`:
+   - Launch type: Fargate (0.25 vCPU / 0.5 GB)
+   - Subnets: **public**
+   - Public IP: **enabled**
+   - Security group: inbound **TCP 8080** from `0.0.0.0/0`
+4. Waited for task → **Running**.
+5. Copied Public IP → hit in browser.
+**Architecture:**  
+Browser → Public IP:8080 → ECS Service → Fargate Task → Node container
+**Proof:**  
+- ECS task details (Running, Public IP: 54.252.178.31)
 
 
 
