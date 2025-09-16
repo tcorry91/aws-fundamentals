@@ -76,7 +76,10 @@ Week-by-week labs covering IAM, EC2, S3, RDS, and Terraform. Emphasis on least p
 Browser → Public IP:8080 → ECS Service → Fargate Task → Node container
 **Proof:**  
 - ECS task details (Running, Public IP: 54.252.178.31)
-
+## Day 3 – CI Workflow + DockerHub success
+- Trigger: push to main touching app/**
+- Steps: checkout → login → build (app/Dockerfile) → tag (1.1 + SHA) → push
+- Proof: see screenshots (Actions success, DockerHub tags)
 
 
 ## Key Concepts Learned
@@ -106,6 +109,9 @@ aws-fundamentals/
 │  └─ day5/
 ├─ Week 4/
 │  ├─ day1/
+│  ├─ day2/
+│  ├─ day3/
+│  ├─ day4/
 └─ README.md
 
 ## Safety & Hygiene
