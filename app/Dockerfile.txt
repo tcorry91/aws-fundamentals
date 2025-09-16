@@ -1,0 +1,21 @@
+# app/Dockerfile
+
+# 1. Base Node.js image
+FROM node:20-alpine
+
+# 2. Set working directory inside container
+WORKDIR /usr/src/app
+
+# 3. Copy package.json and install deps
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# 4. Copy the rest of the app code
+COPY . .
+
+# 5. Set port
+ENV PORT=8080
+EXPOSE 8080
+
+# 6. Start app
+CMD ["node", "index.js"]

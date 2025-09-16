@@ -1,29 +1,37 @@
 name: Build & Push Docker image
+
 on:
   push:
     branches: [ main ]
-    paths: [ "Dockerfile", "app/**", ".github/workflows/docker.yml" ]
+    paths: [ "app/**", ".github/workflows/docker.yml" ]
+
 env:
   IMAGE_NAME: timuser91/myapp
   VERSION_TAG: "1.1"
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Verify secrets
         run: |
           test -n "${{ secrets.DOCKERHUB_USERNAME }}" || (echo "Missing DOCKERHUB_USERNAME" && exit 1)
           test -n "${{ secrets.DOCKERHUB_TOKEN }}" || (echo "Missing DOCKERHUB_TOKEN" && exit 1)
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build
-        run: docker build -t $IMAGE_NAME:$VERSION_TAG .
+
+      - name: Build (using app/Dockerfile)
+        run: docker build -t $IMAGE_NAME:$VERSION_TAG -f "./app/Dockerfile" .
+
       - name: Tag with short SHA
         run: docker tag $IMAGE_NAME:$VERSION_TAG $IMAGE_NAME:${GITHUB_SHA::12}
+
       - name: Push
         run: |
           docker push $IMAGE_NAME:$VERSION_TAG
