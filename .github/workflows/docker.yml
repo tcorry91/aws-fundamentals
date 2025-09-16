@@ -1,4 +1,4 @@
-name: Build & Push Docker image
+name: Build & Push Docker image   # <-- this is the workflow's name
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build (using app/Dockerfile)
-        run: docker build -t $IMAGE_NAME:$VERSION_TAG -f "./app/Dockerfile" .
+        run: docker build -t $IMAGE_NAME:$VERSION_TAG -f "./app/Dockerfile" ./app
 
       - name: Tag with short SHA
         run: docker tag $IMAGE_NAME:$VERSION_TAG $IMAGE_NAME:${GITHUB_SHA::12}
