@@ -1,9 +1,10 @@
-name: Build & Push Docker image   # <-- this is the workflow's name
+name: Build & Push Docker image
 
 on:
   push:
     branches: [ main ]
     paths: [ "app/**", ".github/workflows/docker.yml" ]
+  workflow_dispatch: {}   
 
 env:
   IMAGE_NAME: timuser91/myapp
@@ -15,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify secrets
+      - name: Verify DockerHub secrets
         run: |
           test -n "${{ secrets.DOCKERHUB_USERNAME }}" || (echo "Missing DOCKERHUB_USERNAME" && exit 1)
           test -n "${{ secrets.DOCKERHUB_TOKEN }}" || (echo "Missing DOCKERHUB_TOKEN" && exit 1)
@@ -36,3 +37,42 @@ jobs:
         run: |
           docker push $IMAGE_NAME:$VERSION_TAG
           docker push $IMAGE_NAME:${GITHUB_SHA::12}
+
+     
+      - name: Prep deploy vars
+        id: prep
+        run: echo "SHA_TAG=${GITHUB_SHA::12}" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: ECS deploy (register new task def & update service)
+        env:
+          CLUSTER:  myapp-cluster-mk2    
+          SERVICE:  myapp-svc            
+          IMAGE_URI: docker.io/${{ env.IMAGE_NAME }}:${{ steps.prep.outputs.SHA_TAG }}
+        run: |
+          set -euo pipefail
+          TD_ARN=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" --query "services[0].taskDefinition" --output text)
+          aws ecs describe-task-definition --task-definition "$TD_ARN" --query 'taskDefinition' > td.json
+
+          jq --arg IMG "$IMAGE_URI" '
+            del(
+              .taskDefinitionArn,.revision,.status,.requiresAttributes,
+              .registeredAt,.registeredBy,.compatibilities
+            )
+            | .containerDefinitions |= ( map( .image=$IMG ) )
+          ' td.json > new-td.json
+
+          NEW_TD_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-td.json \
+            --query 'taskDefinition.taskDefinitionArn' --output text)
+
+          aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TD_ARN"
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "$SERVICE"
+          echo "✅ Deployed $IMAGE_URI to $SERVICE ($NEW_TD_ARN)"
+   
