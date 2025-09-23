@@ -120,6 +120,9 @@ Stress-tested with ApacheBench (ab).
 
 Captured CPU spike in CloudWatch → screenshot
 
+- **Day 2** — CloudWatch Logs & Insights: shipped Apache access logs to CloudWatch and queried top endpoints → [screenshot](week5/day2-logs/insights-query.png).
+
+
 ## Key Concepts Learned
 - **IAM:** root vs users, groups, MFA; **roles vs users**, instance profiles; STS temp creds; least privilege.
 - **S3:** buckets vs objects; Block Public Access; **bucket policy > ACLs**; virtual-hosted–style URLs.
@@ -154,6 +157,7 @@ aws-fundamentals/
   ├─ day5/
   ├─ Week 5/
     ├─ day1/
+       ├─ day2/
 └─ README.md
 
 ## Safety & Hygiene
