@@ -124,6 +124,11 @@ Captured CPU spike in CloudWatch → screenshot
 
 - **Day 3** — CloudWatch Alarm: Create a CPU alarm that triggers when utilization > 70% for 2 mins and sends an SNS email notification.
 
+ **Day 4** - Enabled ECS Container Insights and captured container-level metrics
+- Enabled CloudWatch Container Insights on ECS cluster (myapp-cluster-mk2)
+- Verified service (myapp-svc) reporting task-level CPU, memory, network, and storage metrics
+- Added deliverable screenshot under /day4-ecs-metrics/
+
 
 ## Key Concepts Learned
 - **IAM:** root vs users, groups, MFA; **roles vs users**, instance profiles; STS temp creds; least privilege.
