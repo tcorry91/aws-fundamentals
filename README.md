@@ -1,140 +1,202 @@
-# aws-fundamentals
+aws-fundamentals
 
-Hands-on AWS & Terraform labs on Windows (PowerShell + Git Bash). Real outputs: screenshots, commands, and notes from building real infrastructure step by step.
+Hands-on AWS & Terraform labs on Windows (PowerShell + Git Bash). Real outputs: screenshots, commands, and notes from building infrastructure step by step.
 
----
+Overview
 
-## 📘 Overview
+A full progression from AWS fundamentals to production-grade cloud infrastructure. Covers IAM, EC2, S3, RDS, Terraform, Docker, ECS Fargate, and CloudWatch — with emphasis on least privilege, automation, observability, and reproducible infrastructure.
 
-A full progression from AWS fundamentals to production-grade infrastructure. Covers IAM, EC2, S3, RDS, Terraform, Docker, ECS Fargate, and CloudWatch — with emphasis on least privilege, automation, and reproducible infrastructure.
+Completed Labs
+Week 1 – Core AWS Basics
 
----
+Day 1 — AWS account setup + AWS CLI verification (aws s3 ls)
 
-## ✅ Completed Labs
+Day 2 — Launch EC2, SSH access, security groups, and web server
 
-### Week 1 – Core AWS Basics
-- **Day 1** — AWS account setup + AWS CLI verification (`aws s3 ls`).
-- **Day 2** — Launch EC2, SSH access, security groups, and web server.
-- **Day 3** — IAM users, groups, MFA, and least privilege.
-- **Day 4** — S3 static website hosting and bucket policies.
-- **Day 5** — Bash script to list S3 buckets → `s3_report.txt`.
+Day 3 — IAM users, groups, MFA, and least privilege
 
----
+Day 4 — S3 static website hosting and bucket policies
 
-### Week 2 – Roles, RDS, and Policies
-- **Day 1** — EC2 lifecycle operations (stop/start/reboot/terminate).
-- **Day 2** — EC2 instance role with `AmazonS3ReadOnlyAccess`.
-- **Day 3** — RDS MySQL (private subnet) + secure EC2 → RDS access over 3306.
-- **Day 4** — S3 policies: public read via bucket policy; scoped EC2 role policy.
-- **Day 5** — Mini PHP web app reads MySQL data from RDS.
+Day 5 — Bash script to list S3 buckets → s3_report.txt
 
----
+Week 2 – Roles, RDS, and Policies
 
-### Week 3 – Terraform & Infrastructure as Code
-- **Day 1** — S3 bucket with Terraform (`init → plan → apply`).
-- **Day 2** — Terraform EC2 with variables and outputs.
-- **Day 3** — Remote state: S3 backend + DynamoDB state locking.
-- **Day 4** — Custom VPC (public + private subnets) + routing.
-- **Day 5** — IAM role for EC2 with S3 read-only permissions.
+Day 1 — EC2 lifecycle operations (stop/start/reboot/terminate)
 
----
+Day 2 — EC2 instance role with AmazonS3ReadOnlyAccess
 
-### Week 4 – Containers & Deployment
-- **Day 1** — Dockerize Node “Hello World”.
-- **Day 2** — Push image to DockerHub (`timuser91/myapp:1.0`).
-- **Day 3** — Deploy container to AWS ECS (Fargate) + public endpoint.
-- **Day 4–5** — CI/CD pipeline: GitHub Actions → DockerHub → ECS deploy.
+Day 3 — RDS MySQL (private subnet) + secure EC2 → RDS access over 3306
 
-**Architecture:**  
+Day 4 — S3 policies: public read via bucket policy; scoped EC2 role policy
+
+Day 5 — Mini PHP web app reads MySQL data from RDS
+
+Week 3 – Terraform & Infrastructure as Code
+
+Day 1 — S3 bucket with Terraform (init → plan → apply)
+
+Day 2 — Terraform EC2 with variables and outputs
+
+Day 3 — Remote state: S3 backend + DynamoDB state locking
+
+Day 4 — Custom VPC (public + private subnets) + routing
+
+Day 5 — IAM role for EC2 with S3 read-only permissions
+
+Week 4 – Containers & Deployment
+
+Day 1 — Dockerize Node “Hello World”
+
+Day 2 — Push image to DockerHub (timuser91/myapp:1.0)
+
+Day 3 — Deploy container to AWS ECS (Fargate) + public endpoint
+
+Day 4–5 — CI/CD pipeline: GitHub Actions → DockerHub → ECS deploy
+
+Architecture:
 Browser → Public IP:8080 → ECS Service → Fargate Task → Node container
 
----
+Week 5 – Monitoring & Observability
 
-### Week 5 – 📊 Monitoring & Observability
+Day 1 – CloudWatch Metrics:
+Launched EC2 + Apache, stress-tested with ApacheBench (ab), and captured CPU spike in CloudWatch.
 
-- **Day 1 – CloudWatch Metrics:**  
-  - Launched EC2 + Apache and stress-tested with ApacheBench (`ab`).
-  - Captured CPU spike in CloudWatch metrics dashboard.
+Day 2 – CloudWatch Logs & Insights:
+Streamed Apache access logs to CloudWatch Logs and queried top endpoints.
 
-- **Day 2 – CloudWatch Logs & Insights:**  
-  - Streamed Apache access logs to CloudWatch Logs.
-  - Ran queries in CloudWatch Insights to find top endpoints.
+Day 3 – CloudWatch Alarms & SNS:
+Created a CPU alarm (>70% for 2 min) and received SNS email notifications.
 
-- **Day 3 – CloudWatch Alarms & SNS:**  
-  - Created CPU alarm (>70% for 2 min).
-  - SNS topic delivered email notification when alarm triggered.
+Day 4 – ECS Container Insights:
+Enabled Container Insights on ECS cluster myapp-cluster-mk2 and verified task-level metrics (CPU, memory, network, storage).
 
-- **Day 4 – ECS Container Insights:**  
-  - Enabled Container Insights on ECS cluster `myapp-cluster-mk2`.
-  - Verified task-level CPU, memory, network, and storage metrics.
-  - Captured container-level metric screenshots.
+Day 5 – Documentation & Repo Polish:
+Centralized screenshots and diagrams under /docs/cloudwatch/ and updated the README.
 
-- **Day 5 – Documentation & Repo Polish:**  
-  - Centralized screenshots and diagrams under `/docs/cloudwatch/`.
-  - Updated root README with metrics, logs, and alarm sections.
+Week 6 – Portfolio Polish & Final Assembly
 
----
+Fundamentals Repo: Cleaned screenshots, removed clutter, and added a “Lessons Learned” section.
 
-## 🧠 Key Concepts Learned
+Core Services Repo: Verified mini PHP app (EC2 → RDS → S3) and added a full setup guide.
 
-- **IAM:** Root vs IAM users, roles, instance profiles, STS, least privilege.
-- **S3:** Buckets vs objects, Block Public Access, bucket policy > ACLs.
-- **EC2:** Key pairs, security groups, ephemeral IPs, IMDSv2.
-- **RDS:** Private endpoints, SG→SG access, SSL connections.
-- **Terraform:** Providers, state, locking, variables, remote state.
-- **ECS/Fargate:** Containers, services, tasks, networking.
-- **CloudWatch:** Metrics, logs, alarms, Container Insights, SNS.
+Terraform Repo: Added USAGE.md with init/plan/apply/destroy workflow and VPC architecture diagram.
 
----
+CI/CD Repo: Verified GitHub Actions → DockerHub → ECS pipeline end-to-end and added a pipeline diagram.
 
-## 📂 Repository Structure
+Monitoring Repo: Added alarm → SNS diagram and embedded screenshots directly in the README.
 
+Capstone Project: Created cloud-capstone-project combining Terraform infra, Dockerized app, ECS deployment, and CloudWatch monitoring.
+
+Result: All repos are now polished, documented, and portfolio-ready — with architecture diagrams, installation instructions, and real outputs.
+
+Key Concepts Learned
+
+IAM: Root vs IAM users, roles, instance profiles, STS, least privilege
+
+S3: Buckets vs objects, Block Public Access, bucket policy > ACLs
+
+EC2: Key pairs, security groups, ephemeral IPs, IMDSv2
+
+RDS: Private endpoints, SG→SG access, SSL connections
+
+Terraform: Providers, state, locking, variables, remote state
+
+ECS/Fargate: Containers, services, tasks, networking
+
+CloudWatch: Metrics, logs, alarms, Container Insights, SNS
+
+Repository Structure
 aws-fundamentals/
 ├─ Scripts/
-│ └─ s3_list.sh
+│  └─ s3_list.sh
 ├─ week1/
 ├─ week2/
 ├─ week3/
 ├─ week4/
 ├─ week5/
-└─ docs/
-└─ cloudwatch/
-├─ metrics.png
-├─ logs-query.png
-├─ alarm-triggered.png
-├─ alarm-email.png
-└─ architecture.png
+├─ docs/
+│  ├─ architecture-diagram.png
+│  ├─ pipeline-diagram.png
+│  └─ cloudwatch/
+│     ├─ metrics.png
+│     ├─ logs-query.png
+│     ├─ alarm-triggered.png
+│     ├─ alarm-email.png
+│     └─ ecs-container-insights.png
 
-yaml
-Copy code
+Metrics, Logs & Alarms
+Feature	Description	Screenshot
+Metrics	CPU spike on EC2 instance captured via CloudWatch	docs/cloudwatch/metrics.png
+Logs	Apache access logs queried in CloudWatch Logs Insights	docs/cloudwatch/logs-query.png
+Alarms	CPU alarm > 70% triggered SNS email	docs/cloudwatch/alarm-triggered.png
+Email	SNS notification received	docs/cloudwatch/alarm-email.png
+ECS	Container-level metrics (CPU, memory, network, storage)	docs/cloudwatch/ecs-container-insights.png
+Installation & Setup
 
----
+Steps to deploy the sample PHP app that connects EC2 → RDS → S3:
 
-## 📊 Metrics, Logs & Alarms
+1. Clone this repo
+git clone https://github.com/<your-username>/aws-fundamentals.git
+cd aws-fundamentals
 
-| Feature | Description | Screenshot |
-|--------|------------|------------|
-| Metrics | CPU spike on EC2 instance captured via CloudWatch | `docs/cloudwatch/metrics.png` |
-| Logs | Apache access logs queried in CloudWatch Logs Insights | `docs/cloudwatch/logs-query.png` |
-| Alarms | CPU alarm > 70% triggered SNS email | `docs/cloudwatch/alarm-triggered.png` |
-| Email | SNS notification received | `docs/cloudwatch/alarm-email.png` |
-| ECS | Container-level metrics (CPU, memory, network, storage) | `docs/cloudwatch/metrics.png` |
+2. Launch an EC2 instance
 
----
+Use Amazon Linux 2023 (t3.micro is fine)
 
-## 🔒 Safety & Hygiene
+Open inbound ports: 22 (SSH) and 80 (HTTP)
 
-- No credentials committed. `.gitignore` excludes `.terraform/`, state files, `*.tfvars`, and crash logs.
-- Tear down lab infrastructure when idle:  
-  ```bash
-  terraform destroy -auto-approve
+Attach an IAM role with AmazonS3ReadOnlyAccess
+
+Connect to the instance:
+
+ssh -i your-key.pem ec2-user@<public-ip>
+
+3. Install Apache + PHP
+sudo dnf install -y httpd php php-mysqlnd
+sudo systemctl enable --now httpd
+
+4. Deploy the app
+
+Copy the PHP app to the web root:
+
+sudo cp app/index.php /var/www/html/index.php
 
 
-  📜 License
+Edit index.php with your RDS connection info:
 
-MIT – free to use, learn from, and extend.
+$host = "your-rds-endpoint.amazonaws.com";
+$user = "admin";
+$pass = "password";
+$db   = "testdb";
 
 
----
+Restart Apache:
 
-Would you like me to include a **small architecture diagram** (Mermaid or PNG) showing EC2 → CloudWatch → SNS → Email? That’s the one piece that would really complete the `/docs/cloudwatch/` section visually.
+sudo systemctl restart httpd
+
+5. Verify everything
+
+Ensure RDS SG allows 3306 from EC2 SG
+
+Create an S3 bucket and upload a test object
+
+Access the app:
+
+http://<EC2-public-ip>
+
+
+You should see "It works!" and database data.
+
+This is a minimal setup for learning and demos — not production-ready. Extend with load balancers, HTTPS, and private subnets for real-world use.
+
+Safety & Hygiene
+
+No credentials committed. .gitignore excludes .terraform/, state files, *.tfvars, and crash logs.
+
+Tear down lab infrastructure when idle:
+
+terraform destroy -auto-approve
+
+License
+
+MIT — free to use, learn from, and extend.
